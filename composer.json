@@ -1,0 +1,16 @@
+{
+  "name": "vladitot/composer-extra-plugin",
+  "type": "composer-plugin",
+  "require": {
+    "composer-plugin-api": "^1.1",
+    "composer/composer": "^1.7"
+  },
+  "extra": {
+    "class": "ExtraPlugin\\Plugin"
+  },
+  "autoload": {
+    "psr-4": {
+      "ExtraPlugin\\": "src/"
+    }
+  }
+}

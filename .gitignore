@@ -1,0 +1,4 @@
+servers-setup/*
+docker-compose.local.yml
+.idea/*
+vendor/*
