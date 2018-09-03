@@ -18,11 +18,11 @@ class StaticHelper
      * @param $searchForString
      * @return array
      */
-    public static function getAllExtra($file, $searchForString) {
+    public static function getAllExtra($file, $searchForString, $baseDir='') {
         $searchFor = explode('-', $searchForString);
         $searchable = [];
 
-        $content = json_decode(file_get_contents($file), true);
+        $content = $baseDir.'/'.json_decode(file_get_contents($file), true);
         if (isset($content['extra'])) {
             $currentEl = $content['extra'];
 
@@ -42,7 +42,7 @@ class StaticHelper
             $extraIncludes = $content['extra']['merge-plugin']['include'];
             $includedFoundSearchables = [];
             foreach ($extraIncludes as $file) {
-                $includedFoundSearchables = array_replace($includedFoundSearchables, self::getAllExtra($file, $searchForString));
+                $includedFoundSearchables = array_replace($includedFoundSearchables, self::getAllExtra($file, $searchForString, $baseDir));
             }
         } else {
             $includedFoundSearchables = [];
