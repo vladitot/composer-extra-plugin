@@ -22,7 +22,7 @@ class StaticHelper
         $searchFor = explode('-', $searchForString);
         $searchable = [];
 
-        $content = $baseDir.'/'.json_decode(file_get_contents($file), true);
+        $content = json_decode(file_get_contents($baseDir.'/'.$file), true);
         if (isset($content['extra'])) {
             $currentEl = $content['extra'];
 
