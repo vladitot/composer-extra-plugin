@@ -14,6 +14,6 @@ class CommandProvider implements CommandProviderCapability
 {
     public function getCommands()
     {
-        return array(new ExtraGetCommand());
+        return array(new ExtraGetCommand(), new RunScriptCommand());
     }
 }
