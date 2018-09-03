@@ -30,7 +30,7 @@ class ExtraGetCommand extends BaseCommand
     {
         $settings = $this->getAllExtra('composer.json', $input->getArgument('param'));
         foreach ($settings as $key=>$prop) {
-            $output->write($key.'=\''.$prop.'\''." ");
+            $output->write($key.'="'.$prop.'"'." ");
         }
         $output->writeln('');
     }
