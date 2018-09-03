@@ -28,49 +28,12 @@ class ExtraGetCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $settings = $this->getAllExtra('composer.json', $input->getArgument('param'));
+        $settings = StaticHelper::getAllExtra('composer.json', $input->getArgument('param'));
         foreach ($settings as $key=>$prop) {
             $output->write($key.'='.$prop.''." ");
         }
         $output->writeln('');
     }
 
-    /**
-     * Getter params from extra
-     * Say them, which key do you want to get. Another time you will able to export them, for example.
-     * @param $file
-     * @param $searchForString
-     * @return array
-     */
-    protected function getAllExtra($file, $searchForString) {
-        $searchFor = explode('-', $searchForString);
-        $searchable = [];
 
-        $content = json_decode(file_get_contents($file), true);
-        if (isset($content['extra'])) {
-            $currentEl = $content['extra'];
-
-            foreach ($searchFor as $item) {
-                if (isset($currentEl[$item])) {
-                    $currentEl = $currentEl[$item];
-                } else {
-                    break;
-                }
-            }
-            if ($currentEl != $content['extra']) {
-                $searchable = $currentEl;
-            }
-        }
-
-        if (isset($content['extra']['merge-plugin']['include'])) {
-            $extraIncludes = $content['extra']['merge-plugin']['include'];
-            $includedFoundSearchables = [];
-            foreach ($extraIncludes as $file) {
-                $includedFoundSearchables = array_replace($includedFoundSearchables, $this->getAllExtra($file, $searchForString));
-            }
-        } else {
-            $includedFoundSearchables = [];
-        }
-        return array_replace($searchable, $includedFoundSearchables);
-    }
 }
