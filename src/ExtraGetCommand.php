@@ -31,11 +31,11 @@ class ExtraGetCommand extends BaseCommand
         $mainComposerFile = 'composer.json';
         $baseDir = dirname(realpath($mainComposerFile));
         $settings = StaticHelper::getAllExtra('composer.json', $input->getArgument('param'), $baseDir);
-        $summary = '';
+        $summaryLine = '';
         foreach ($settings as $key=>$prop) {
-            $summary.=($key.'='.$prop.''." ");
+            $summaryLine.=($key.'='.$prop.''." ");
         }
-        $output->writeln(trim($summary));
+        $output->writeln(trim($summaryLine));
     }
 
 
