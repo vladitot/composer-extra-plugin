@@ -28,7 +28,9 @@ class ExtraGetCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $settings = StaticHelper::getAllExtra('composer.json', $input->getArgument('param'));
+        $mainComposerFile = 'composer.json';
+        $baseDir = dirname(realpath($mainComposerFile));
+        $settings = StaticHelper::getAllExtra('composer.json', $input->getArgument('param'), $baseDir);
         foreach ($settings as $key=>$prop) {
             $output->write($key.'='.$prop.''." ");
         }
