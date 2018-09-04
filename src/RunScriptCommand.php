@@ -28,7 +28,9 @@ class RunScriptCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $commands = StaticHelper::getAllExtra('composer.json', 'extracommands');
+        $mainComposerFile = 'composer.json';
+        $baseDir = dirname(realpath($mainComposerFile));
+        $commands = StaticHelper::getAllExtra($mainComposerFile, 'extracommands', $baseDir);
         if (!isset($commands[$input->getArgument('param')])) {
             echo $input->getArgument('param').' - not found in extra -> extra-commands block';
             exit(1);
