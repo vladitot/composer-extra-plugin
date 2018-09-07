@@ -24,6 +24,7 @@ class RunScriptCommand extends BaseCommand
         $this->setDescription('Can be used to to start scripts via tty');
         $this->setName('runt');
         $this->addArgument('param', InputArgument::REQUIRED, 'Name of script which need to run from "extra -> extra-commands" block');
+        $this->addArgument('options', InputArgument::IS_ARRAY, "additional parameters");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -35,7 +36,9 @@ class RunScriptCommand extends BaseCommand
             echo $input->getArgument('param').' - not found in extra -> extra-commands block';
             exit(1);
         }
-        $process = new \Symfony\Component\Process\Process($commands[$input->getArgument('param')]);
+        $process = new \Symfony\Component\Process\Process(
+            $commands[$input->getArgument('param')].' '.implode(' ', $input->getArgument('options'))
+        );
         $process->setTty(true);
         $process->setPty(true);
         $process->run();
