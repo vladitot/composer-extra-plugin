@@ -43,16 +43,16 @@ class RunScriptCommand extends BaseCommand
         }
 
         $matches=[];
-        preg_match_all($additionalRegular, $input->getArgument($commands[$input->getArgument('commandName')]), $matches);
+        preg_match_all($additionalRegular, $commands[$input->getArgument('commandName')], $matches);
 
-        $command = $commands[$input->getArgument('commandName')].' '.implode(' ', $input->getArgument('options'));
+        $command = str_replace('@params%', implode(' ', $input->getArgument("options")), $commands[$input->getArgument('commandName')]);
 
         if (count($matches[0])>0) {
             foreach ($matches[0] as $addCommand) {
-                $command = str_replace($addCommand, $commands, $command);
+                $command = str_replace($addCommand, $commands[$addCommand], $command);
             }
         }
-        echo "\n".'will process '.$command."\n";
+//        echo "\n".'will process '.$command."\n";
         $process = new \Symfony\Component\Process\Process(
             $command
         );
