@@ -23,21 +23,38 @@ class RunScriptCommand extends BaseCommand
     {
         $this->setDescription('Can be used to to start scripts via tty');
         $this->setName('runt');
-        $this->addArgument('param', InputArgument::REQUIRED, 'Name of script which need to run from "extra -> extra-commands" block');
+        $this->addArgument('commandName', InputArgument::REQUIRED, 'Name of script which need to run from "extra -> extra-commands" block');
         $this->addArgument('options', InputArgument::IS_ARRAY, "additional parameters");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $additionalRegular = '/\@\d+%/';
+        if (preg_match($additionalRegular, $input->getArgument('commandName'))) {
+            echo 'You cant start additional commands only';
+            exit(1);
+        }
         $mainComposerFile = 'composer.json';
         $baseDir = dirname(realpath($mainComposerFile));
         $commands = StaticHelper::getAllExtra($mainComposerFile, 'extracommands', $baseDir);
-        if (!isset($commands[$input->getArgument('param')])) {
-            echo $input->getArgument('param').' - not found in extra -> extra-commands block';
+        if (!isset($commands[$input->getArgument('commandName')])) {
+            echo $input->getArgument('commandName').' - not found in extra -> extra-commands block';
             exit(1);
         }
+
+        $matches=[];
+        preg_match_all($additionalRegular, $input->getArgument($commands[$input->getArgument('commandName')]), $matches);
+
+        $command = $commands[$input->getArgument('commandName')].' '.implode(' ', $input->getArgument('options'));
+
+        if (count($matches[0])>0) {
+            foreach ($matches[0] as $addCommand) {
+                $command = str_replace($addCommand, $commands, $command);
+            }
+        }
+        echo "\n".'will process '.$command."\n";
         $process = new \Symfony\Component\Process\Process(
-            $commands[$input->getArgument('param')].' '.implode(' ', $input->getArgument('options'))
+            $command
         );
         $process->setTty(true);
         $process->setPty(true);
