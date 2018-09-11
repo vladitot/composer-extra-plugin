@@ -38,38 +38,33 @@ class StaticHelper
                 $searchable = $currentEl;
             }
         }
-        if (is_array($searchable)) {
-            $includedFoundSearchables = [];
-        } else {
-            $includedFoundSearchables = null;
-        }
 
         if (isset($content['extra']['merge-plugin']['include'])) {
             $extraIncludes = $content['extra']['merge-plugin']['include'];
             foreach ($extraIncludes as $file) {
-                $inMergedSearchable = self::getAllExtra($file, $searchForString, $baseDir);
-                //var_dump($inMergedSearchable);
-                if (is_array($searchable)) {
-                    if (is_array($inMergedSearchable)) {
-                        $includedFoundSearchables = array_replace($includedFoundSearchables, $inMergedSearchable);
-                    }
-                } else {
-                    $includedFoundSearchables = $inMergedSearchable;
+                $searchableFromIncluded = self::getAllExtra($file, $searchForString, $baseDir);
+                if (is_null($searchableFromIncluded)) {
+                    continue;
                 }
-            }
-        }
 
-        if (is_array($searchable)) {
-            if (!is_array($includedFoundSearchables)) {
-                throw new \Exception('Merged config values types are incompatible');
-            }
-            return array_replace($searchable, $includedFoundSearchables);
-        } else {
-            if (is_string($includedFoundSearchables)) {
-                return $includedFoundSearchables;
-            } else {
-                return $searchable;
+                if (is_null($searchable)) {
+                    $searchable=$searchableFromIncluded;
+                    continue;
+                }
+
+                if (gettype($searchable) != gettype($searchableFromIncluded)) {
+                    throw new \Exception("Types in included files are incompatible");
+                } else {
+                    if (is_array($searchable)) {
+                        $searchable = array_replace($searchable, $searchableFromIncluded);
+                    } elseif (is_string($searchable)) {
+                        $searchable = $searchableFromIncluded;
+                    }
+                }
+
+
             }
         }
+        return $searchable;
     }
 }
