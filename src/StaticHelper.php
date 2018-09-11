@@ -16,11 +16,12 @@ class StaticHelper
      * Say them, which key do you want to get. Another time you will able to export them, for example.
      * @param $file
      * @param $searchForString
-     * @return array
+     * @return array|string
+     * @throws \Exception
      */
     public static function getAllExtra($file, $searchForString, $baseDir='') {
         $searchFor = explode('-', $searchForString);
-        $searchable = [];
+        $searchable = null;
 
         $content = json_decode(file_get_contents($baseDir.'/'.$file), true);
         if (isset($content['extra'])) {
@@ -37,16 +38,38 @@ class StaticHelper
                 $searchable = $currentEl;
             }
         }
+        if (is_array($searchable)) {
+            $includedFoundSearchables = [];
+        } else {
+            $includedFoundSearchables = null;
+        }
 
         if (isset($content['extra']['merge-plugin']['include'])) {
             $extraIncludes = $content['extra']['merge-plugin']['include'];
-            $includedFoundSearchables = [];
             foreach ($extraIncludes as $file) {
-                $includedFoundSearchables = array_replace($includedFoundSearchables, self::getAllExtra($file, $searchForString, $baseDir));
+                $inMergedSearchable = self::getAllExtra($file, $searchForString, $baseDir);
+                //var_dump($inMergedSearchable);
+                if (is_array($searchable)) {
+                    if (is_array($inMergedSearchable)) {
+                        $includedFoundSearchables = array_replace($includedFoundSearchables, $inMergedSearchable);
+                    }
+                } else {
+                    $includedFoundSearchables = $inMergedSearchable;
+                }
             }
-        } else {
-            $includedFoundSearchables = [];
         }
-        return array_replace($searchable, $includedFoundSearchables);
+
+        if (is_array($searchable)) {
+            if (!is_array($includedFoundSearchables)) {
+                throw new \Exception('Merged config values types are incompatible');
+            }
+            return array_replace($searchable, $includedFoundSearchables);
+        } else {
+            if (is_string($includedFoundSearchables)) {
+                return $includedFoundSearchables;
+            } else {
+                return $searchable;
+            }
+        }
     }
 }
