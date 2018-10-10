@@ -21,20 +21,22 @@ class StaticHelper
      */
     public static function getAllExtra($file, $searchForString, $baseDir='') {
         $searchFor = explode('-', $searchForString);
+        $depth = count($searchFor);
         $searchable = null;
 
         $content = json_decode(file_get_contents($baseDir.'/'.$file), true);
         if (isset($content['extra'])) {
             $currentEl = $content['extra'];
-
+            $currentDepth=0;
             foreach ($searchFor as $item) {
                 if (isset($currentEl[$item])) {
                     $currentEl = $currentEl[$item];
+                    $currentDepth++;
                 } else {
                     break;
                 }
             }
-            if ($currentEl != $content['extra']) {
+            if ($currentEl != $content['extra'] && $depth==$currentDepth) {
                 $searchable = $currentEl;
             }
         }
