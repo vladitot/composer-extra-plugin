@@ -22,7 +22,11 @@ class RunScriptCommand extends BaseCommand
     protected function configure()
     {
         $this->setDescription('Can be used to to start scripts via tty');
-        $this->setName('runt');
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $this->setName('wrunt');
+        } else {
+            $this->setName('runt');
+        }
         $this->addArgument('commandName', InputArgument::REQUIRED, 'Name of script which need to run from "extra -> extra-commands" block');
         $this->addArgument('options', InputArgument::IS_ARRAY, "additional parameters");
     }
@@ -52,13 +56,16 @@ class RunScriptCommand extends BaseCommand
                 $command = str_replace($addCommand, $commands[$addCommand], $command);
             }
         }
-//        echo "\n".'will process '.$command."\n";
-        $process = new \Symfony\Component\Process\Process(
-            $command
-        );
-        $process->setTty(true);
-        $process->setPty(true);
-        $process->run();
+
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            echo $command;
+        } else {
+            $process = new \Symfony\Component\Process\Process(
+                $command
+            );
+            $process->setTty(true);
+            $process->run();
+        }
     }
 
 
