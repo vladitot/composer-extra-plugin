@@ -12,6 +12,7 @@ namespace ExtraPlugin;
 use Composer\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RunScriptCommand extends BaseCommand
@@ -28,6 +29,7 @@ class RunScriptCommand extends BaseCommand
             $this->setName('runt');
         }
         $this->addArgument('commandName', InputArgument::REQUIRED, 'Name of script which need to run from "extra -> extra-commands" block');
+        $this->addOption('no-interactive', null, InputOption::VALUE_OPTIONAL, 'Don`t enable tty', false);
         $this->addArgument('options', InputArgument::IS_ARRAY, "additional parameters");
     }
 
@@ -63,7 +65,11 @@ class RunScriptCommand extends BaseCommand
             $process = new \Symfony\Component\Process\Process(
                 $command
             );
-            $process->setTty(true);
+            if (!$input->getOption('no-interactive')) {
+                $process->setTty(true);
+            } else {
+                $process->setTty(false);
+            }
             $process->run();
         }
     }
