@@ -6,7 +6,7 @@ In additional, composer-extra-plugin can be used for automatisation long commads
 
 ## How to install
 
-    composer install vladitot/composer-extra-plugin
+    composer require vladitot/composer-extra-plugin
     
 ### If you just deployed project, which contains this plugin for managing docker, and cant start it without plugin, it is recommended to do:
     composer install --ignore-platofrm-reqs
