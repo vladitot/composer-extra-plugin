@@ -73,3 +73,22 @@ on your host machine, and it will run command, as alias.
 
 In additional, you can get settings from json inside your application.
 Use class **\ExtraPlugin\StaticHelper** for this
+
+#### Lifehack for Linux
+
+Put in your ~/.bashrc:
+
+    function runt () {
+    	A="composer runt \"$1\" \"${@:2}\""
+    	bash -c "$A"
+    }
+    
+Then you will allow to use (instead of composer runt artisan):
+    
+    runt artisan
+    
+By the way, with this lifehack you will able to use additional params for command under "runt". 
+
+    runt artisan --help
+
+It will show **artisan help** instead of **composer help**
